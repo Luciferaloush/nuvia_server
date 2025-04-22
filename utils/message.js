@@ -108,6 +108,10 @@ const getMessage = (key, language) => {
             en : "Content and topics are required.",
             ar: "نص المنشور و نوع المحتوى مطلوب"
         },
+        hashtagMustStartWithHash: {
+            ar: "يجب أن يبدأ الهاشتاج بعلامة #.",
+            en: "Hashtag must start with #."
+        }
         
     };
     return messages[key][language] || messages[key].en; 

@@ -77,7 +77,6 @@ const userSchema = mongoose.Schema({
           type: mongoose.Schema.Types.ObjectId,
           ref: 'Post',
       }],
-
 });
 const Users = mongoose.model('Users',userSchema);
 module.exports = Users;

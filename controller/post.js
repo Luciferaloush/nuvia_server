@@ -6,23 +6,42 @@ const Post = require("../model/post");
 const add = errorHandler(async (req, res) => {
           const userId = req.user.id;
           const { language } = req.query;
-          const { content, image, topics} = req.body;
+          const { content, image, hashtag} = req.body;
           console.log("Received language:", language);
 
           if (!language || !['ar', 'en'].includes(language)) {
               return res.status(400).json({ message: "Invalid language" });
           }
-          if(!content || !topics){
+          if(!content){
                     return res.status(404).json({
                               message: getMessage("contentandtopicsarerequired", language)
                     });
           }
+
           const newPost = new Post({
                     content,
                     image: image || null,
-                    topics,
+                    hashtag: hashtag || [],
                     creator: userId,
+                    topics: { ar: [], en: [] } 
           });
+          if (Array.isArray(hashtag)) {
+            hashtag.forEach(tag => {
+                if (tag.startsWith('#')) {
+                    const topic = tag.slice(1);
+                    if (language === 'en') {
+                        newPost.topics.en.push(topic);
+                    } else if (language === 'ar') {
+                        newPost.topics.ar.push(topic);
+                    }
+                    newPost.hashtage.push(tag);
+                } else {
+                    return res.status(400).json({
+                        message: getMessage("hashtagMustStartWithHash", language)
+                    });
+                }
+            });
+        }
           await newPost.save();
           await Users.findByIdAndUpdate(userId, { $push: { posts: newPost._id } });
 

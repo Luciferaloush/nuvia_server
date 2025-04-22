@@ -10,8 +10,12 @@ const postSchema = mongoose.Schema({
         default: null,
     },
     topics: {
-        ar: [String],
-        en: [String],
+        ar: { type: [String], default: [] },
+        en: { type: [String], default: [] },
+    },
+    hashtage: {
+        type: [String],
+        default: [],
     },
     creator: {
         type: mongoose.Schema.Types.ObjectId,
