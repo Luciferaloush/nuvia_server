@@ -86,7 +86,8 @@ const allPosts = errorHandler(async (req, res) => {
           res.setHeader('Cache-Control', 'no-cache');
           res.setHeader('Connection', 'keep-alive');
           const sendPosts = async() => {
-                    const posts = await Post.find({creator: { $ne: userId }});
+                    const posts = await Post.find({creator: { $ne: userId }})
+                    .populate('creator', 'firstname lastname');
                     res.write(`data: ${JSON.stringify(posts)}\n\n`)
           };
           sendPosts();
@@ -97,6 +98,7 @@ const allPosts = errorHandler(async (req, res) => {
                     res.end();
                 });
 });
+
 module.exports = {
           add,
           myPosts,
