@@ -85,11 +85,18 @@ const allPosts = errorHandler(async (req, res) => {
           res.setHeader('Content-Type', 'text/event-stream');
           res.setHeader('Cache-Control', 'no-cache');
           res.setHeader('Connection', 'keep-alive');
-          const sendPosts = async() => {
-                    const posts = await Post.find({creator: { $ne: userId }})
-                    .populate('creator', 'firstname lastname');
-                    res.write(`data: ${JSON.stringify(posts)}\n\n`)
-          };
+          const sendPosts = async () => {
+            const posts = await Post.find({ creator: { $ne: userId } })
+                .populate('creator', 'firstname lastname');
+    
+            const postsWithLikeStatus = posts.map(post => ({
+                ...post.toObject(), 
+                likeStatus: post.likes.includes(userId)
+            }));
+    
+            res.write(`data: ${JSON.stringify(postsWithLikeStatus)}\n\n`);
+        };
+    
           sendPosts();
           const intervalId = setInterval(sendPosts, 1800000); 
 
