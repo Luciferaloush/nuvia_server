@@ -5,10 +5,10 @@ const postSchema = mongoose.Schema({
         type: String,
         required: true, 
     },
-    image: {
+    image:[ {
         type: String, 
         default: null,
-    },
+    }],
     topics: {
         ar: { type: [String], default: [] },
         en: { type: [String], default: [] },
