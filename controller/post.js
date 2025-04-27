@@ -8,10 +8,9 @@ const add = errorHandler(async (req, res) => {
           const { language } = req.query;
           const { content, image, hashtag} = req.body;
           console.log("Received language:", language);
-
           if (!language || !['ar', 'en'].includes(language)) {
-              return res.status(400).json({ message: "Invalid language" });
-          }
+            return res.status(400).json({ message: "Invalid language" });
+        }
           if(!content){
                     return res.status(404).json({
                               message: getMessage("contentandtopicsarerequired", language)
