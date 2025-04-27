@@ -7,5 +7,4 @@ const auth = require('../middlware/auth');
 router.post('/add', admin, contentController.add);
 router.get('/get-all-topic', auth,contentController.getAllTopic);
 router.post('/select-topics', auth,contentController.selectTopics);
-
 module.exports = router;
