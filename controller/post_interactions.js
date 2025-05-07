@@ -69,16 +69,20 @@ const addComment = errorHandler(async (req, res) => {
         });
     }
           const { postId } = req.params;
-          const { comment } = req.body;
+          const { comment, rating } = req.body;
+          if (!comment || rating === undefined) {
+            return res.status(400).json({
+                message: getMessage("commentAndRatingRequired", language)
+            });
+        }
+          console.log(rating);
           const post = await Post.findById(postId);
           if(!post){
             return res.status.json({
                 message: getMessage("postNotFound")
             })
           }
-
-          post.comments.push({ userId, comment});
-          
+          post.comments.push({ userId, comment, rating});
           await post.save();
           res.status(200).json({
             message:getMessage("commentAdded", language),
@@ -87,6 +91,7 @@ const addComment = errorHandler(async (req, res) => {
                 firstname: user.firstname,
                 lastname: user.lastname,
                 comment: comment,
+                rating : rating,
                 createdAt: new Date(), 
             }
           })

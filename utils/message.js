@@ -111,6 +111,14 @@ const getMessage = (key, language) => {
         hashtagMustStartWithHash: {
             ar: "يجب أن يبدأ الهاشتاج بعلامة #.",
             en: "Hashtag must start with #."
+        },
+        error_calculating_popularity: {
+            ar: "خطأ في حساب الشعبية",
+            en: "Error Calculating Popularity"
+        },
+        commentAndRatingRequired: {
+            ar: "مطلوب التعليق والتقييم",
+            en: "Comment And RatingRequired"
         }
         
     };

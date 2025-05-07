@@ -21,6 +21,7 @@
     "fuzzylogic": "^0.3.5",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.3",
+    "node-cron": "^3.0.3",
     "nodemailer": "^6.10.1",
     "socket.io": "^4.8.1"
   },
