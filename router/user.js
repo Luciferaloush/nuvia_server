@@ -8,5 +8,6 @@ router.post('/unfollow/:id', auth, userController.unFollowUser);
 router.get('/followers', auth,  userController.getFollowers);
 router.get('/following', auth, userController.getFollowing);
 router.get('/posts/:userIdPost', auth, userController.post);
+router.get('/users', auth, userController.getUsers);
 
 module.exports = router;

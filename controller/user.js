@@ -56,7 +56,13 @@ if (isFollowing && isFollowedBy) {
             pots: postUser
           });
         });
-
+const getUsers = errorHandler(async (req, res) => {
+  const userId = req.user.id;
+  const user = await Users.find({});
+  res.status(200).json({
+    user
+  })
+});
 const followUser  = errorHandler(async (req, res) => {
           const {language} = req.query;
     
@@ -165,5 +171,6 @@ module.exports = {
           unFollowUser,
           getFollowers,
           getFollowing,
-          post
+          post,
+          getUsers
 }
