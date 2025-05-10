@@ -35,6 +35,7 @@ if (isFollowing && isFollowedBy) {
     followingStatus = 3; 
 }
           const postUser = user.posts.map(post => ({
+            _id: post._id,
             content: post.content,
             image: post.image,
             topics: post.topics,
@@ -47,8 +48,10 @@ if (isFollowing && isFollowedBy) {
             createdAt: post.createdAt
         }));
           res.json({
+            _id: user._id,
             firstname: user.firstname,
             lastname: user.lastname,
+            image: user.image,
             topics: user.selectedTopics,
             followers: user.followers.length,
             following: user.following.length,
