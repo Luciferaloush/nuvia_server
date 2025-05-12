@@ -116,9 +116,9 @@ const getMessage = (key, language) => {
             ar: "خطأ في حساب الشعبية",
             en: "Error Calculating Popularity"
         },
-        commentAndRatingRequired: {
-            ar: "مطلوب التعليق والتقييم",
-            en: "Comment And RatingRequired"
+        commentRequired: {
+            ar: "مطلوب التعليق ",
+            en: "Comment Required"
         }
         
     };
