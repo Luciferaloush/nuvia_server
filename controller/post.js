@@ -96,10 +96,11 @@ const allPosts = errorHandler(async (req, res) => {
         console.log(interest);
         let recommendationQuality  = evaluateRecommendation(interest, engagements);
         console.log(recommendationQuality);
-        let message;
-    const postGR = await Post.find({}).sort({likes: -1}).limit(5);
-    const postAR = await Post.find({}).limit(5);
-    const postBR = await Post.find({}).sort({createdAt: -1}).limit(5);
+        let message;1
+    const postGR = await Post.find({}).sort({likes: -1}).limit(5)
+    .populate('creator', 'firstname lastname');
+    const postAR = await Post.find({}).limit(5).populate('creator', 'firstname lastname');
+    const postBR = await Post.find({}).sort({createdAt: -1}).limit(5).populate('creator', 'firstname lastname');
 
     const response = {
         userPosts: posts, 
