@@ -161,8 +161,8 @@ if (!topPost || typeof topPost === 'undefined') {
 }
 const engagement = await Post.find({'likes': userId});
         const userInterest  = await Users.findById(userId);
-        const comments = await Post.find({'comments.userId': userId});
-        const shared = await Post.find({"sharedPosts": userId});
+        const comments = await Post.find({'comments.userId': userId}).populate('creator', 'firstname lastname');
+        const shared = await Post.find({"sharedPosts": userId}).populate('creator', 'firstname lastname');
         const engagements = engagement.length + comments.length + shared.length;
         const interest = userInterest ? userInterest.selectedTopics.length : 0;
         const recommendationQuality  = evaluateRecommendation(interest, engagements);
