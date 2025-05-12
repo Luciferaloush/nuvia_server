@@ -173,7 +173,8 @@ const engagement = await Post.find({'likes': userId});
             console.log("Returning ER posts");
             res.status(200).json({
                 message:message,
-                post: [postER, topPost],
+                excellentReco:postER,
+                topPost: topPost
             });
         }else{
             message = "TP";
