@@ -36,10 +36,7 @@ const postSchema = mongoose.Schema({
             type: String,
             required: true,
         },
-        rating:{
-            type : Number,
-            required:false ,
-    },
+        
         createdAt: {
             type: Date,
             default: Date.now,

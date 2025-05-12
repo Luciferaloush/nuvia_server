@@ -161,12 +161,14 @@ if (!topPost || typeof topPost === 'undefined') {
 }
 const engagement = await Post.find({'likes': userId});
         const userInterest  = await Users.findById(userId);
-        const comments = await Post.find({'comments.userId': userId}).populate('creator', 'firstname lastname');
-        const shared = await Post.find({"sharedPosts": userId}).populate('creator', 'firstname lastname');
-        const engagements = engagement.length + comments.length + shared.length;
+        const comments = await Post.find({'comments.userId': userId});
+                const shared = await Post.find({"sharedPosts": userId});
+                const engagements = engagement.length + comments.length + shared.length;
         const interest = userInterest ? userInterest.selectedTopics.length : 0;
-        const recommendationQuality  = evaluateRecommendation(interest, engagements);
-        const postER = await Post.find({isFeatured: true}).limit(5);
+        const recommendationQuality  = evaluateRecommendation(interest, engagements)
+        .populate('creator', 'firstname lastname');
+        const postER = await Post.find({isFeatured: true}).limit(5)
+        .populate("creator", "firstname lastname");
         let message;
         if(recommendationQuality === "ER"){
             message = "ER";
