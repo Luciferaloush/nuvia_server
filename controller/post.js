@@ -151,7 +151,7 @@ const foryou = errorHandler(async (req, res) => {
         });
     }
     const userId = req.user.id;
-    const posts = await Post.find({});
+    const posts = await Post.find({}).populate('creator', 'firstname lastname');
     const topPost = calculatePopularity(posts);
     topPost.forEach(post => {
         console.log(`POST ID: ${post._id}, Weighted Popularity: ${post.weightedPopularity}`)
@@ -166,7 +166,6 @@ const engagement = await Post.find({'likes': userId});
                 const engagements = engagement.length + comments.length + shared.length;
         const interest = userInterest ? userInterest.selectedTopics.length : 0;
         const recommendationQuality  = evaluateRecommendation(interest, engagements)
-        .populate('creator', 'firstname lastname');
         const postER = await Post.find({isFeatured: true}).limit(5)
         .populate("creator", "firstname lastname");
         let message;
