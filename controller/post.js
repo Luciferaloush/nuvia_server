@@ -24,7 +24,8 @@ const add = errorHandler(async (req, res) => {
                     image: image || null,
                     hashtag: hashtag || [],
                     creator: userId,
-                    topics: { ar: [], en: [] } 
+                    topics: { ar: [], en: [] },
+                    likeStatus: false
           });
           if (Array.isArray(hashtag)) {
             hashtag.forEach(tag => {
@@ -87,6 +88,12 @@ const allPosts = errorHandler(async (req, res) => {
           const userFollowedId = user.following;
           const posts = await Post.find({ creator: { $in: userFollowedId } })
         .populate('creator', 'firstname lastname');
+        const likedPosts = await Post.find({ likes: userId }).distinct('_id');
+
+    const postsWithLikeStatus = posts.map(post => ({
+        ...post.toObject(),
+        likeStatus: likedPosts.includes(post._id) 
+    }));
         const engagement = await Post.find({'likes': userId});
         const userInterest  = await Users.findById(userId);
         const comments = await Post.find({'comments.userId': userId});
@@ -103,7 +110,7 @@ const allPosts = errorHandler(async (req, res) => {
     const postBR = await Post.find({}).sort({createdAt: -1}).limit(5).populate('creator', 'firstname lastname');
 
     const response = {
-        userPosts: posts, 
+        userPosts: postsWithLikeStatus, 
     };
 
     if (recommendationQuality === "ER") {
@@ -153,6 +160,13 @@ const foryou = errorHandler(async (req, res) => {
     const userId = req.user.id;
     const posts = await Post.find({}).populate('creator', 'firstname lastname');
     const topPost = calculatePopularity(posts);
+    const likeStatuses = await Post.find({ likes: userId }).distinct('_id');
+
+    const topPostWithLikeStatus = topPost.map(post => ({
+        ...post,
+        likeStatus: likeStatuses.includes(post._id) 
+    }));
+
     topPost.forEach(post => {
         console.log(`POST ID: ${post._id}, Weighted Popularity: ${post.weightedPopularity}`)
 });
@@ -161,6 +175,7 @@ if (!topPost || typeof topPost === 'undefined') {
 }
 const engagement = await Post.find({'likes': userId});
         const userInterest  = await Users.findById(userId);
+
         const comments = await Post.find({'comments.userId': userId});
                 const shared = await Post.find({"sharedPosts": userId});
                 const engagements = engagement.length + comments.length + shared.length;
@@ -168,20 +183,24 @@ const engagement = await Post.find({'likes': userId});
         const recommendationQuality  = evaluateRecommendation(interest, engagements)
         const postER = await Post.find({isFeatured: true}).limit(5)
         .populate("creator", "firstname lastname");
+        const postERWithLikeStatus = postER.map(post => ({
+        ...post,
+        likeStatus: likeStatuses.includes(post._id) 
+    }));
         let message;
         if(recommendationQuality === "ER"){
             message = "ER";
             console.log("Returning ER posts");
             res.status(200).json({
                 message:message,
-                excellentReco:postER,
-                topPost: topPost
+                excellentReco:postERWithLikeStatus,
+                topPost: topPostWithLikeStatus
             });
         }else{
             message = "TP";
 res.status(200).json({
     message:  message,
-    post: topPost
+    post: topPostWithLikeStatus
 });}
 });
 module.exports = {

@@ -52,6 +52,8 @@ const postSchema = mongoose.Schema({
         default: Date.now, 
     },
     isFeatured: { type: Boolean, default: false },
+        likeStatus: { type: Boolean, default: false },
+
 
 });
 
