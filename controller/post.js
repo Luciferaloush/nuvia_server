@@ -152,56 +152,62 @@ const updateFeaturedPosts = async () => {
 
 const foryou = errorHandler(async (req, res) => {
     const { language } = req.query;
-    if(!language || !['ar', 'en'].includes(language)){
-        return res.status(404).json({
+    if (!language || !['ar', 'en'].includes(language)) {
+        return res.status(400).json({
             message: getMessage("invalidLanguage", language)
         });
     }
+    
     const userId = req.user.id;
+    if (!userId) {
+        return res.status(404).json({
+            message: getMessage("userNotFound", language)
+        });
+    }
+
     const posts = await Post.find({}).populate('creator', 'firstname lastname');
     const topPost = calculatePopularity(posts);
     const likeStatuses = await Post.find({ likes: userId }).distinct('_id');
 
     const topPostWithLikeStatus = topPost.map(post => ({
-        ...post,
-        likeStatus: likeStatuses.includes(post._id) 
+        ...post.toObject(), 
+        likeStatus: likeStatuses.includes(post._id)
     }));
 
-    topPost.forEach(post => {
-        console.log(`POST ID: ${post._id}, Weighted Popularity: ${post.weightedPopularity}`)
-});
-if (!topPost || typeof topPost === 'undefined') {
-    return res.status(500).json({ message:getMessage("error_calculating_popularity.", language) });
-}
-const engagement = await Post.find({'likes': userId});
-        const userInterest  = await Users.findById(userId);
+    if (!topPost || typeof topPost === 'undefined') {
+        return res.status(500).json({ message: getMessage("error_calculating_popularity.", language) });
+    }
 
-        const comments = await Post.find({'comments.userId': userId});
-                const shared = await Post.find({"sharedPosts": userId});
-                const engagements = engagement.length + comments.length + shared.length;
-        const interest = userInterest ? userInterest.selectedTopics.length : 0;
-        const recommendationQuality  = evaluateRecommendation(5, 200)
-        const postER = await Post.find({isFeatured: true}).limit(5)
-        .populate("creator", "firstname lastname");
-        const postERWithLikeStatus = postER.map(post => ({
-        ...post,
-        likeStatus: likeStatuses.includes(post._id) 
+    const engagement = await Post.find({ 'likes': userId });
+    const userInterest = await Users.findById(userId);
+    const comments = await Post.find({ 'comments.userId': userId });
+    const shared = await Post.find({ "sharedPosts": userId });
+    const engagements = engagement.length + comments.length + shared.length;
+    const interest = userInterest ? userInterest.selectedTopics.length : 0;
+
+    const recommendationQuality = evaluateRecommendation(interest, engagements);
+    
+    const postER = await Post.find({ isFeatured: true }).limit(5).populate("creator", "firstname lastname");
+    const postERWithLikeStatus = postER.map(post => ({
+        ...post.toObject(),
+        likeStatus: likeStatuses.includes(post._id)
     }));
-        let message;
-        if(recommendationQuality === "ER"){
-            message = "ER";
-            console.log("Returning ER posts");
-            res.status(200).json({
-                message:message,
-                excellentReco:postERWithLikeStatus,
-                topPost: topPostWithLikeStatus
-            });
-        }else{
-            message = "TP";
-res.status(200).json({
-    message:  message,
-    post: topPostWithLikeStatus
-});}
+
+    let message;
+    if (recommendationQuality === "ER") {
+        message = "ER";
+        res.status(200).json({
+            message: message,
+            excellentReco: postERWithLikeStatus,
+            topPost: topPostWithLikeStatus
+        });
+    } else {
+        message = "TP";
+        res.status(200).json({
+            message: message,
+            post: topPostWithLikeStatus
+        });
+    }
 });
 module.exports = {
           add,
