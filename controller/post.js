@@ -180,7 +180,7 @@ const engagement = await Post.find({'likes': userId});
                 const shared = await Post.find({"sharedPosts": userId});
                 const engagements = engagement.length + comments.length + shared.length;
         const interest = userInterest ? userInterest.selectedTopics.length : 0;
-        const recommendationQuality  = evaluateRecommendation(interest, engagements)
+        const recommendationQuality  = evaluateRecommendation(5, 200)
         const postER = await Post.find({isFeatured: true}).limit(5)
         .populate("creator", "firstname lastname");
         const postERWithLikeStatus = postER.map(post => ({
