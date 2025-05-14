@@ -7,22 +7,35 @@ const getProfile = errorHandler(async (req, res) => {
           if (!language || !['ar', 'en'].includes(language)) {
             return res.status(400).json({ message: getMessage('invalidLanguage', language) });
           }
-        
+  
           const currentUserId = req.user.id;
+                    const me = await Users.findById(currentUserId);
+                    console.log(me);
           const userId = req.params.id;
           const user = await Users.findById(userId)
-            .populate('followers', 'firstname lastname')
-            .populate('following', 'firstname lastname')
+            .populate('followers', '_id firstname lastname')
+            .populate('following', '_id firstname lastname')
             .populate('posts');
-        
+        console.log("Current User ID:", currentUserId);
+console.log("User ID:", userId);
+console.log("User Followers:", user.followers);
+console.log("User Following:", user.following);
           if (!user) {
             return res.status(404).json({
               message: getMessage('userNotFound', language),
             });
           }
-        
-          const isFollowing = user.following.includes(currentUserId);
-const isFollowedBy = user.followers.includes(currentUserId);
+        if(user.following._id === userId){
+          console.log("this is following")
+        }
+        if(user.followers._id === userId){
+          console.log("this is not following")
+        }
+          const isFollowing = user.following.some(follow => follow._id.toString()
+           === currentUserId.toString());
+    const isFollowedBy = user.followers.some(follower => follower._id.toString() ===
+     currentUserId.toString());
+
 
 let followingStatus;
 if (isFollowing && isFollowedBy) {
@@ -61,11 +74,31 @@ if (isFollowing && isFollowedBy) {
         });
 const getUsers = errorHandler(async (req, res) => {
   const userId = req.user.id;
-  const user = await Users.find({});
+  console.log(`userId ${userId}`);
+  
+  const currentUser = await Users.findById(userId).populate('following').populate('followers');
+
+  const followingIds = currentUser.following.map(user => user._id.toString());
+  const followersIds = currentUser.followers.map(follower => follower._id.toString());
+
+  const users = await Users.find({ _id: { $nin: followingIds } });
+
+  const userResponse = users.map(user => {
+    const isFollowedBy = followersIds.includes(user._id.toString());
+    
+    return {
+      _id: user._id,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      followingStatus: isFollowedBy ? "Follow Back" : "Follow"
+    };
+  });
+
   res.status(200).json({
-    user
-  })
+    users: userResponse
+  });
 });
+
 const followUser  = errorHandler(async (req, res) => {
           const {language} = req.query;
     
