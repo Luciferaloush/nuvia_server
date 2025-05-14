@@ -147,9 +147,9 @@ const getFollowers  = errorHandler(async (req, res) => {
                     });
                   }
                 const followersList  = user.followers.map(follower => ({
-                    id: followersList._id,
-                    firstname: followersList.firstname,
-                    lastname: followersList.lastname
+                    id: follower._id,
+                    firstname: follower.firstname,
+                    lastname: follower.lastname
                 }));
                 res.status(200).json({
                     followers: followersList
@@ -181,7 +181,7 @@ const getFollowing = errorHandler(async (req, res) => {
         
           res.json({ following: followingList });
         });
-        const post = errorHandler(async (req, res) => {
+  const post = errorHandler(async (req, res) => {
           const { language } = req.query;
         
           if (!language || !['ar', 'en'].includes(language)) {
