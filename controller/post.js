@@ -65,7 +65,8 @@ const myPosts = errorHandler(async (req, res) => {
                 const myPost = await Users.findById(userId).populate('posts');
                 const postsWithTopics = myPost.posts.map(post => ({
                     ...post.toObject(),
-                    topics: post.topics[language] 
+                    topics: post.topics[language] ,
+                    likeStatus: post.likeStatus
                 }));
             
                 res.status(200).json({

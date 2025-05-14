@@ -23,9 +23,12 @@ const likePost = errorHandler(async (req, res) => {
           }
           if(!post.likes.includes(userId)){
                     post.likes.push(userId);
+                    ///
+                            post.likeStatus = true; 
                     await post.save();
                     return res.status(200).json({
-                              message:getMessage("postLikedSuccessfully", language)
+                              message:getMessage("postLikedSuccessfully", language),
+                              likeStatus: post.likeStatus
                     })
           }else {
                     return res.status(400).json({ message: 'You already liked this post' });
