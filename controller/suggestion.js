@@ -29,7 +29,7 @@ const suggestionFriend = errorHandler(async (req, res) => {
                     .select('firstname lastname image');
                 return {
                     ...userDetails.toObject(),
-                    mutualFriends: count 
+                    mutualFriends: userDetails.length 
                 };
             })
         );
