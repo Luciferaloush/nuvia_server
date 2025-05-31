@@ -1,6 +1,40 @@
+const Notification = require("../model/notification");
 const Users = require("../model/user");
 const errorHandler = require("../utils/error_handler");
 const getMessage = require("../utils/message");
+
+const followUser  = errorHandler(async (req, res) => {
+          const {language} = req.query;
+    
+          if (!language || !['ar', 'en'].includes(language)) {
+              return res.status(400).json({ message: getMessage('invalidLanguage', language) });
+          } ;
+          const userId = req.params.id;
+          const currentUserId = req.user.id;
+          const user = await Users.findById(currentUserId);
+          await Users.findByIdAndUpdate(currentUserId, {
+                    $addToSet: { following: userId}
+          });
+          await Users.findByIdAndUpdate(userId, {
+                    $addToSet: {followers: currentUserId}
+          });
+          
+          const notification = new Notification({
+        userId: userId,
+        user:{
+          _id: user._id,
+          firstname: user.firstname,
+          lastname: user.lastname,
+          image: user.image || null,
+        },
+        message: `User ${user.firstname} is now following you`
+    });
+    await notification.save();
+
+
+          res.json({ message: 'Now following the user' });
+
+})
 const getProfile = errorHandler(async (req, res) => {
           const { language } = req.query;
         
@@ -99,23 +133,7 @@ const getUsers = errorHandler(async (req, res) => {
   });
 });
 
-const followUser  = errorHandler(async (req, res) => {
-          const {language} = req.query;
-    
-          if (!language || !['ar', 'en'].includes(language)) {
-              return res.status(400).json({ message: getMessage('invalidLanguage', language) });
-          } ;
-          const userId = req.params.id;
-          const currentUserId = req.user.id;
-          await Users.findByIdAndUpdate(currentUserId, {
-                    $addToSet: { following: userId}
-          });
-          await Users.findByIdAndUpdate(userId, {
-                    $addToSet: {followers: currentUserId}
-          });
-          res.json({ message: 'Now following the user' });
 
-})
 const unFollowUser = errorHandler(async (req, res) => {
           const {language} = req.query;
     
@@ -201,6 +219,7 @@ const getFollowing = errorHandler(async (req, res) => {
             posts
           })
         });
+        
 module.exports = {
           getProfile,
           followUser,

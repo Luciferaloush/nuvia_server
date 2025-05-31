@@ -74,7 +74,8 @@ const login = errorHandler(async (req, res) => {
     
     res.status(200).json({
         message: getMessage('loginSuccess', language),
-        token
+        token,
+    _id: user._id
     });
 });
 const profile = errorHandler(async (req, res) => {
