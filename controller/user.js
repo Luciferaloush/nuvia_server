@@ -228,6 +228,7 @@ const getSimilarUsers= errorHandler(async (req, res) => {
   const similarUsers = users
   .filter(user => user._id !== currentUser._id && !currentUser.following.includes(user._id))
   .map(user =>({
+    _id: user._id,
     firstname: user.firstname,
     lastname: user.lastname,
     image: user.image,
@@ -237,7 +238,6 @@ const getSimilarUsers= errorHandler(async (req, res) => {
   const sortedSimilarUsers = similarUsers
         .sort((a, b) => b.similarity - a.similarity)
         .slice(0, 15); 
-
         return res.json(sortedSimilarUsers);
 })
 module.exports = {
