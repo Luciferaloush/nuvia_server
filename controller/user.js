@@ -231,7 +231,7 @@ const getSimilarUsers= errorHandler(async (req, res) => {
     firstname: user.firstname,
     lastname: user.lastname,
     image: user.image,
-    similarity: calculateJaccardSimilarity(targetUser.selectedTopics, user.selectedTopics),
+    similarity: calculateJaccardSimilarity(currentUser.selectedTopics, user.selectedTopics),
     isFollowing: currentUser.following.includes(user._id) ? 0 : 1 // 0 = يتابعني، 1 = لا يتابعني
   }))
   const sortedSimilarUsers = similarUsers
