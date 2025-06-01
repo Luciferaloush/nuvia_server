@@ -238,7 +238,7 @@ const getSimilarUsers= errorHandler(async (req, res) => {
         .sort((a, b) => b.similarity - a.similarity)
         .slice(0, 15); 
 
-    return sortedSimilarUsers;
+        return res.json(sortedSimilarUsers);
 })
 module.exports = {
           getProfile,
