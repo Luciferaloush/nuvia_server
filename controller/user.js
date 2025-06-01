@@ -1,3 +1,4 @@
+const { calculateJaccardSimilarity } = require("../algorthim/collaborative_filtering");
 const Notification = require("../model/notification");
 const Users = require("../model/user");
 const errorHandler = require("../utils/error_handler");
@@ -219,7 +220,26 @@ const getFollowing = errorHandler(async (req, res) => {
             posts
           })
         });
-        
+
+const getSimilarUsers= errorHandler(async (req, res) => {
+  const userId = req.user.id;
+  const currentUser = await Users.findById(userId).populate('following');
+  const users = await Users.find().populate('following');
+  const similarUsers = users
+  .filter(user => user._id !== currentUser._id && !currentUser.following.includes(user._id))
+  .map(user =>({
+    firstname: user.firstname,
+    lastname: user.lastname,
+    image: user.image,
+    similarity: calculateJaccardSimilarity(targetUser.selectedTopics, user.selectedTopics),
+    isFollowing: currentUser.following.includes(user._id) ? 0 : 1 // 0 = يتابعني، 1 = لا يتابعني
+  }))
+  const sortedSimilarUsers = similarUsers
+        .sort((a, b) => b.similarity - a.similarity)
+        .slice(0, 15); 
+
+    return sortedSimilarUsers;
+})
 module.exports = {
           getProfile,
           followUser,
@@ -227,5 +247,6 @@ module.exports = {
           getFollowers,
           getFollowing,
           post,
-          getUsers
+          getUsers,
+          getSimilarUsers
 }

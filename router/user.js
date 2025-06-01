@@ -9,5 +9,6 @@ router.get('/followers', auth,  userController.getFollowers);
 router.get('/following', auth, userController.getFollowing);
 router.get('/posts/:userIdPost', auth, userController.post);
 router.get('/users', auth, userController.getUsers);
+router.get('/similar-users', auth, userController.getSimilarUsers);
 
 module.exports = router;

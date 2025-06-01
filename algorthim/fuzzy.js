@@ -36,22 +36,22 @@ const fuzzylogic = require('fuzzylogic');
 
 const interestLevel = (interest) => {
     if (interest > 0 && interest < 2) {
-        return fuzzylogic.grade(interest, 0, 2); // Small Level
+        return fuzzylogic.grade(interest, 0, 2); // S L
     } else if (interest >= 2 && interest <= 5) {
-        return fuzzylogic.grade(interest, 2, 5); // Medium Level
+        return fuzzylogic.grade(interest, 2, 5); // M L
     } else if (interest > 5) {
-        return fuzzylogic.grade(interest, 5, 10); // High Level
+        return fuzzylogic.grade(interest, 5, 10); // H L
     }
     return 0; 
 };
 
 const engagementLevel = (engagement) => {
     if (engagement > 0 && engagement < 25) {
-        return fuzzylogic.grade(engagement, 0, 25); // Small Level
+        return fuzzylogic.grade(engagement, 0, 25); // S L
     } else if (engagement >= 25 && engagement <= 75) {
-        return fuzzylogic.grade(engagement, 25, 75); // Medium Level
+        return fuzzylogic.grade(engagement, 25, 75); // M L
     } else if (engagement > 75) {
-        return fuzzylogic.grade(engagement, 75, 100); // High Level
+        return fuzzylogic.grade(engagement, 75, 100); // H L
     }
     return 0; 
 };

@@ -35,3 +35,7 @@ console.log("users similarity");
 sortedSimilarUser.forEach(user => {
           console.log(`${user.name}: Similarity = ${user.similarity.toFixed(2)}`);
 });
+
+module.exports = {
+          calculateJaccardSimilarity
+}
