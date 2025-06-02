@@ -57,7 +57,7 @@ posts.forEach(post => {
     const matched = allTopics.filter(k => 
       user.selectedTopics.includes(k)
     );
-    if(matched.length >= 2){
+    if(matched.length >= 1){
       const notification = new Notification({
           userId: user._id,
           title: `منشور جديد يعجبك!`,
