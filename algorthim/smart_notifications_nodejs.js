@@ -3,11 +3,6 @@ const Users = require('../model/user');
 const Post = require('../model/post');
 const Notification = require('../model/notification');
 
-
-
-
-
-
 // ======= تحليل منشورات المستخدم وتحديث اهتماماته =======
 const updateUserInterests = async(user)=> {
   const userId = user._id;
@@ -22,8 +17,8 @@ const updateUserInterests = async(user)=> {
   const keywords = {};
   posts.forEach(post => {
     const allTopics = [
-      ...(post.topic?.ar || []),
-      ...(post.topic?.en || []),
+      ...(post.topics?.ar || []),
+      ...(post.topics?.en || []),
       ...(post.hashtage || [])
     ];
     allTopics.forEach(word => {
@@ -42,16 +37,17 @@ const updateUserInterests = async(user)=> {
 }
 const generateNotifications = async () => {
   const users = await Users.find();
+  console.log("Users:", users); // تحقق من أن هناك مستخدمين
   for (const user of users) {
     await updateUserInterests(user);
 
     const posts = await Post.find({
-      createdAt: { $gte: new Date(Date.now() - 1000 * 60 * 60 * 24) }, // خلال آخر 24 ساعة
+      createdAt: { $gte: new Date(Date.now() - 1000 * 60 * 60 * 365) }, 
     });
-posts.forEach(post => {
+posts.forEach(async post => {
     const allTopics = [
-      ...(post.topic?.ar || []),
-      ...(post.topic?.en || []),
+      ...(post.topics?.ar || []),
+      ...(post.topics?.en || []),
       ...(post.hashtage || [])
     ];
     const matched = allTopics.filter(k => 
@@ -63,7 +59,7 @@ posts.forEach(post => {
           title: `منشور جديد يعجبك!`,
           body: `في منشور عن ${matched.join(", ")} ممكن يعجبك!`,
         });
-        notification.save();
+       await notification.save();
     }
   })
     
