@@ -9,6 +9,7 @@ const { updateFeaturedPosts } = require('./controller/post');
 const { saveMessage } = require('./controller/message');
 const { getUsernameById } = require('./controller/conversation');
 const { Conversation } = require('./model/conversation');
+const { generateNotifications } = require('./algorthim/smart_notifications_nodejs');
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -82,7 +83,18 @@ cron.schedule('* * * * *', async () => {
     try {
         console.log('Updating featured content...');
         await updateFeaturedPosts();
+        console.log('⏰ بدأ إنشاء الإشعارات...');
+  await generateNotifications();
+  console.log('✅ تم إنشاء الإشعارات.');
     } catch (error) {
         console.error("Error updating featured content:", error);
     }
 });
+
+// ======= مهمة تعمل كل ساعة =======
+
+// cron.schedule('* * * * *', async () => {
+//   console.log('⏰ بدأ إنشاء الإشعارات...');
+//   await generateNotifications();
+//   console.log('✅ تم إنشاء الإشعارات.');
+// });

@@ -13,14 +13,15 @@ const saveNotification = errorHandler(async (notfId, senderId) => {
                     const notification = await newNotification.save();
                     return notification;
 });
-const getNotification = errorHandler(async (req, res) => {
-          const userId = req.user.id;
-          const notification = await Notification.find({ userId }).sort({ createdAt: -1 });
-          res.status(200).json({
-                   notification 
-          })
+const notification = errorHandler(async (req, res) => {
+         const userId = req.user.id;
+  const notifications = await Notification.find({ userId, delivered: false });
+
+  await Notification.updateMany({ userId, delivered: false }, { delivered: true });
+
+  res.json(notifications);
 })
 module.exports = {
           saveNotification,
-          getNotification
+          notification
 }
